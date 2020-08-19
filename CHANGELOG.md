@@ -58,5 +58,3 @@
 ## Deprecations
 
 * [Controllers] `current_user_id` has been soft deprecated in favor of `current_session_id`
-
-## Test me
