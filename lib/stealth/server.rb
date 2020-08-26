@@ -38,7 +38,7 @@ module Stealth
         params.merge!(json_params)
       end
 
-      puts request
+      Stealth::Logger.l(topic: "debug", message: "Params: #{params}")
 
       dispatcher = Stealth::Dispatcher.new(
         service: params[:service],
