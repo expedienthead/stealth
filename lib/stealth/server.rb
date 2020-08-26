@@ -35,11 +35,11 @@ module Stealth
       # JSON params need to be parsed and added to the params
       if request.env['CONTENT_TYPE']&.match(/application\/json/i)
         json_params = MultiJson.load(request.body.read)
+        Stealth::Logger.l(topic: "debug", message: "Request Body: #{json_params}")  
         params.merge!(json_params)
       end
 
       Stealth::Logger.l(topic: "debug", message: "Params: #{params}")
-      Stealth::Logger.l(topic: "debug", message: "Request Body: #{request.body}")
       Stealth::Logger.l(topic: "debug", message: "Request Url: #{request.url}")
       Stealth::Logger.l(topic: "debug", message: "Request Path: #{request.path}")
       Stealth::Logger.l(topic: "debug", message: "Request Env: #{request.env}")
