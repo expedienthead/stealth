@@ -39,6 +39,7 @@ module Stealth
       end
 
       Stealth::Logger.l(topic: "debug", message: "Params: #{params}")
+      Stealth::Logger.l(topic: "debug", message: "Request: #{request}")
 
       dispatcher = Stealth::Dispatcher.new(
         service: params[:service],
