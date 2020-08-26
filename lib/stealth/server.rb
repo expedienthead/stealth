@@ -43,6 +43,7 @@ module Stealth
       Stealth::Logger.l(topic: "debug", message: "Request Url: #{request.url}")
       Stealth::Logger.l(topic: "debug", message: "Request Path: #{request.path}")
       Stealth::Logger.l(topic: "debug", message: "Request Env: #{request.env}")
+      Stealth::Logger.l(topic: "debug", message: "Headers: #{get_helpers_from_request(request)}")
 
       dispatcher = Stealth::Dispatcher.new(
         service: params[:service],
