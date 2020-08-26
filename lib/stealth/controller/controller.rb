@@ -18,6 +18,7 @@ module Stealth
       @current_message = service_message
       @current_service = service_message.service
       @current_user_id = @current_session_id = service_message.sender_id
+      Stealth::Logger.l(topic: "current_session_id", message: "Current Session Id: #{@current_session_id}") 
       @current_flow = current_flow
       @progressed = false
     end
