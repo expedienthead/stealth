@@ -4,15 +4,20 @@
 module Stealth
   class Session
 
+    include Stealth::Redis
+
     SLUG_SEPARATOR = '->'
 
-    attr_reader :flow, :state, :user_id, :previous, :page_id
+    attr_reader :flow, :state, :user_id, :type, :page_id
     attr_accessor :session
 
-    def initialize(user_id: nil, page_id: nil, previous: false)
+     # Session types:
+     #   - :primary
+     #   - :previous
+    def initialize(user_id: nil, type: :primary, page_id: nil)
       @user_id = user_id
+      @type = type
       @page_id = page_id
-      @previous = previous
 
       if user_id.present?
         unless defined?($redis) && $redis.present?
@@ -22,7 +27,7 @@ module Stealth
           )
         end
 
-        get
+        get_session
       end
 
       self
@@ -53,36 +58,28 @@ module Stealth
       session&.split(SLUG_SEPARATOR)&.last
     end
 
-    def get
-      prev_key = previous_session_key(user_id: user_id)
-
-      @session ||= begin
-        if sessions_expire?
-          previous? ? getex(prev_key) : getex(user_id)
-        else
-          previous? ? $redis.get(prev_key) : $redis.get(user_id)
-        end
-      end
+    def get_session
+      @session ||= get_key(session_key)
     end
 
-    def set(new_flow:, new_state:)
+    def set_session(new_flow:, new_state:)
       @flow = nil # override @flow memoization
-      existing_session = session # tmp backup
+      existing_session = session # tmp backup for previous session storage
       @session = self.class.canonical_session_slug(
         flow: new_flow,
         state: new_state
       )
 
       Stealth::Logger.l(
-        topic: "session",
+        topic: [type, 'session'].join('_'),
         message: "User #{user_id}: setting session to #{new_flow}->#{new_state}"
       )
 
-      store_current_to_previous(
-        existing_session: existing_session
-      )
+      if primary_session?
+        store_current_to_previous(existing_session: existing_session)
+      end
 
-      persist_session(key: user_id, value: session)
+      persist_key(key: session_key, value: session)
     end
 
     def present?
@@ -127,8 +124,21 @@ module Stealth
       [flow, state].join(SLUG_SEPARATOR)
     end
 
-    def session_key(user_id:, page_id:)
-      [user_id, page_id].join('_')
+    def session_key
+      case type
+      when :primary
+        user_id
+      when :previous
+        previous_session_key
+      end
+    end
+
+    def primary_session?
+      type == :primary
+    end
+
+    def previous_session?
+      type == :previous
     end
 
     def to_s
@@ -137,7 +147,7 @@ module Stealth
 
     private
 
-      def previous_session_key(user_id:)
+      def previous_session_key
         [user_id, 'previous'].join('-')
       end
 
@@ -153,29 +163,10 @@ module Stealth
             topic: "previous_session",
             message: "User #{user_id}: setting to #{existing_session}"
           )
-          persist_session(
-            key: previous_session_key(user_id: user_id),
+          persist_key(
+            key: previous_session_key,
             value: existing_session
           )
-        end
-      end
-
-      def sessions_expire?
-        Stealth.config.session_ttl > 0
-      end
-
-      def getex(key)
-        $redis.multi do
-          $redis.expire(key, Stealth.config.session_ttl)
-          $redis.get(key)
-        end.last
-      end
-
-      def persist_session(key:, value:)
-        if sessions_expire?
-          $redis.setex(key, Stealth.config.session_ttl, value)
-        else
-          $redis.set(key, value)
         end
       end
   end

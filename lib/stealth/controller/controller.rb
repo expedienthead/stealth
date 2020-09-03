@@ -14,12 +14,11 @@ module Stealth
                 :current_service, :flow_controller, :action_name,
                 :current_session_id
 
-    def initialize(service_message:, current_flow: nil)
+    def initialize(service_message:)
       @current_message = service_message
       @current_service = service_message.service
       @current_user_id = @current_session_id = service_message.sender_id
       Stealth::Logger.l(topic: "current_session_id", message: "Current Session Id: #{@current_session_id}") 
-      @current_flow = current_flow
       @progressed = false
     end
 
@@ -42,10 +41,7 @@ module Stealth
     def flow_controller
       @flow_controller ||= begin
         flow_controller = [current_session.flow_string.pluralize, 'controller'].join('_').classify.constantize
-        flow_controller.new(
-          service_message: @current_message,
-          current_flow: current_flow
-        )
+        flow_controller.new(service_message: @current_message)
       end
     end
 
@@ -54,7 +50,10 @@ module Stealth
     end
 
     def previous_session
-      @previous_session ||= Stealth::Session.new(user_id: current_session_id, previous: true)
+      @previous_session ||= Stealth::Session.new(
+        user_id: current_session_id,
+        type: :previous
+      )
     end
 
     def action(action: nil)
