@@ -142,8 +142,8 @@ module Stealth
         if session == existing_session
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: skipping setting to #{session} " \
-                     "because it is the same as current_session")
+            message: "User #{user_id}: skipping setting to #{session}" \
+                     " because it is the same as current_session")
         else
           Stealth::Logger.l(
             topic: "previous_session",

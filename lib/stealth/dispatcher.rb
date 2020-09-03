@@ -30,6 +30,9 @@ module Stealth
 
     def process
       service_message = message_handler.process
+
+      log_incoming_message(service_message) if Stealth.config.transcript_logging
+
       bot_controller = BotController.new(service_message: service_message)
       bot_controller.route
     end
@@ -44,5 +47,22 @@ module Stealth
         end
       end
 
+      def log_incoming_message(service_message)
+        return if service_message.blank?
+
+        message = if service_message.location.present?
+                    "Received: <user shared location>"
+                  elsif service_message.attachments.present?
+                    "Received: <user sent attachment>"
+                  elsif service_message.payload.present?
+                    "Received Payload: #{service_message.payload}"
+                  else
+                    "Received Message: #{service_message.message}"
+                  end
+        Stealth::Logger.l(
+          topic: "user",
+          message: "User #{service_message.sender_id} -> #{message}"
+        )
+      end
   end
 end
