@@ -6,11 +6,12 @@ module Stealth
 
     SLUG_SEPARATOR = '->'
 
-    attr_reader :flow, :state, :user_id, :previous
+    attr_reader :flow, :state, :user_id, :previous, :page_id
     attr_accessor :session
 
-    def initialize(user_id: nil, previous: false)
+    def initialize(user_id: nil, page_id: nil, previous: false)
       @user_id = user_id
+      @page_id = page_id
       @previous = previous
 
       if user_id.present?
@@ -118,6 +119,10 @@ module Stealth
       [flow, state].join(SLUG_SEPARATOR)
     end
 
+    def session_key(user_id:, page_id:)
+      [user_id, page_id].join('_')
+    end
+
     private
 
       def previous_session_key(user_id:)
@@ -131,8 +136,14 @@ module Stealth
         if new_session == session
           Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: skipping setting to #{session} because it is the same as current_session")
         else
-          Stealth::Logger.l(topic: "previous_session", message: "User #{user_id}: setting to #{session}")
-          $redis.set(previous_session_key(user_id: user_id), session)
+          Stealth::Logger.l(
+            topic: "previous_session",
+            message: "User #{user_id}: setting to #{new_session}"
+          )
+          persist_session(
+            key: previous_session_key(user_id: user_id),
+            value: session
+          )
         end
       end
 
@@ -147,5 +158,12 @@ module Stealth
         end.last
       end
 
+      def persist_session(key:, value:)
+        if sessions_expire?
+          $redis.setex(key, Stealth.config.session_ttl, value)
+        else
+          $redis.set(key, value)
+        end
+      end
   end
 end
