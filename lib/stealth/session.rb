@@ -131,6 +131,10 @@ module Stealth
       [user_id, page_id].join('_')
     end
 
+    def to_s
+      [flow_string, state_string].join(SLUG_SEPARATOR)
+    end
+
     private
 
       def previous_session_key(user_id:)
