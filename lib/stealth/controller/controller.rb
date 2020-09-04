@@ -128,7 +128,7 @@ module Stealth
         @current_session = Stealth::Session.new(user_id: current_session_id)
 
         unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
-          @current_session.set(new_flow: flow, new_state: state)
+          @current_session.set_session(new_flow: flow, new_state: state)
         end
       end
 
