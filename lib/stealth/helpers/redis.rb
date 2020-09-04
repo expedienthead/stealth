@@ -8,7 +8,7 @@ module Stealth
     included do
       private
 
-      def get_key(key, expiration: Stealth.config.session_ttl0)
+      def get_key(key, expiration: Stealth.config.session_ttl)
         if expiration > 0
           getex(key, expiration)
         else
