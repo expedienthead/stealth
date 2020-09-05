@@ -59,10 +59,6 @@ module Stealth
     end
 
     def get_session
-      Stealth::Logger.l(
-        topic: 'session_key',
-        message: session_key
-      )
       @session ||= get_key(session_key)
     end
 
