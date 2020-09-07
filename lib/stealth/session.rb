@@ -99,7 +99,10 @@ module Stealth
       return self if steps.zero?
 
       new_state = self.state + steps
-      new_session = Stealth::Session.new(user_id: self.user_id)
+      new_session = Stealth::Session.new(
+        user_id: self.user_id,
+        page_id: self.page_id
+      )
       new_session.session = self.class.canonical_session_slug(flow: self.flow_string, state: new_state)
 
       new_session
@@ -127,7 +130,7 @@ module Stealth
     def session_key
       case type
       when :primary
-        user_id
+        primary_session_key
       when :previous
         previous_session_key
       end
@@ -146,6 +149,10 @@ module Stealth
     end
 
     private
+
+      def primary_session_key
+        [user_id, page_id].join('-')
+      end
 
       def previous_session_key
         [user_id, 'previous'].join('-')

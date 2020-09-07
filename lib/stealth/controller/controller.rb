@@ -11,14 +11,17 @@ module Stealth
     include Stealth::Controller::Helpers
 
     attr_reader :current_message, :current_user_id, :current_flow,
-                :current_service, :flow_controller, :action_name,
-                :current_session_id
+                :current_service, :flow_controller, :action_name
 
     def initialize(service_message:)
       @current_message = service_message
       @current_service = service_message.service
-      @current_user_id = @current_session_id = service_message.sender_id
-      Stealth::Logger.l(topic: "current_session_id", message: "Current Session Id: #{@current_session_id}") 
+      @current_user_id = service_message.sender_id
+      @current_session_id = current_session_id
+      Stealth::Logger.l(
+        topic: "current_session_id",
+        message: "Current Session Id: #{@current_session_id}"
+      )
       @progressed = false
     end
 
@@ -34,6 +37,10 @@ module Stealth
       @progressed
     end
 
+    def current_page_info
+      current_message.page_info
+    end
+
     def route
       raise(Stealth::Errors::ControllerRoutingNotImplemented, "Please implement `route` method in BotController")
     end
@@ -46,12 +53,16 @@ module Stealth
     end
 
     def current_session
-      @current_session ||= Stealth::Session.new(user_id: current_session_id)
+      @current_session ||= Stealth::Session.new(
+        user_id: current_user_id,
+        page_id: current_page_info[:page_id]
+      )
     end
 
     def previous_session
       @previous_session ||= Stealth::Session.new(
-        user_id: current_session_id,
+        user_id: current_user_id,
+        page_id: current_page_info[:page_id],
         type: :previous
       )
     end
@@ -96,8 +107,19 @@ module Stealth
         raise ArgumentError, "Please specify your step_to_in `delay` parameter using ActiveSupport::Duration, e.g. `1.day` or `5.hours`"
       end
 
-      Stealth::ScheduledReplyJob.perform_in(delay, current_service, current_session_id, flow, state, current_message.target_id)
-      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds")
+      Stealth::ScheduledReplyJob.perform_in(
+        delay,
+        current_service,
+        current_user_id,
+        flow,
+        state,
+        current_page_info,
+        current_message.target_id
+      )
+      Stealth::Logger.l(
+        topic: "session",
+        message: "Session #{current_session_id}: scheduled session step to #{flow}->#{state} in #{delay} seconds"
+      )
     end
 
     def step_to_at(timestamp, session: nil, flow: nil, state: nil)
@@ -107,8 +129,19 @@ module Stealth
         raise ArgumentError, "Please specify your step_to_at `timestamp` parameter as a DateTime"
       end
 
-      Stealth::ScheduledReplyJob.perform_at(timestamp, current_service, current_session_id, flow, state, current_message.target_id)
-      Stealth::Logger.l(topic: "session", message: "User #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}")
+      Stealth::ScheduledReplyJob.perform_at(
+        timestamp,
+        current_service,
+        current_user_id,
+        flow,
+        state,
+        current_page_info,
+        current_message.target_id
+      )
+      Stealth::Logger.l(
+        topic: "session",
+        message: "Session #{current_session_id}: scheduled session step to #{flow}->#{state} at #{timestamp.iso8601}"
+      )
     end
 
     def step_to(session: nil, flow: nil, state: nil)
@@ -121,11 +154,18 @@ module Stealth
       update_session(flow: flow, state: state)
     end
 
+    def current_session_id
+      [@current_user_id, fb_page_info[:page_id]].join("_")
+    end
+
     private
 
       def update_session(flow:, state:)
         @progressed = :updated_session
-        @current_session = Stealth::Session.new(user_id: current_session_id)
+        @current_session = Stealth::Session.new(
+          user_id: current_user_id,
+          page_id: current_page_info[:page_id]
+        )
 
         unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
           @current_session.set_session(new_flow: flow, new_state: state)
@@ -146,9 +186,7 @@ module Stealth
           raise(ArgumentError, "A session, flow, or state must be specified")
         end
 
-        if session.present?
-          return session.flow_string, session.state_string
-        end
+        return session.flow_string, session.state_string if session.present?
 
         if flow.present?
           if state.blank?
@@ -158,10 +196,7 @@ module Stealth
           return flow.to_s, state.to_s
         end
 
-        if state.present?
-          return current_session.flow_string, state.to_s
-        end
+        return current_session.flow_string, state.to_s if state.present?
       end
-
   end
 end
