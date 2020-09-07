@@ -72,7 +72,7 @@ module Stealth
 
       Stealth::Logger.l(
         topic: [type, 'session'].join('_'),
-        message: "User #{user_id}: setting session to #{new_flow}->#{new_state}"
+        message: "User #{user_id} / Page #{page_id}: setting session to #{new_flow}->#{new_state}"
       )
 
       if primary_session?
@@ -155,7 +155,7 @@ module Stealth
       end
 
       def previous_session_key
-        [user_id, 'previous'].join('-')
+        [primary_session_key, 'previous'].join('-')
       end
 
       def store_current_to_previous(existing_session:)
@@ -163,12 +163,12 @@ module Stealth
         if session == existing_session
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: skipping setting to #{session}" \
+            message: "User #{user_id} / Page #{page_id}: skipping setting to #{session}" \
                      " because it is the same as current_session")
         else
           Stealth::Logger.l(
             topic: "previous_session",
-            message: "User #{user_id}: setting to #{existing_session}"
+            message: "User #{user_id} / Page #{page_id}: setting to #{existing_session}"
           )
           persist_key(
             key: previous_session_key,
