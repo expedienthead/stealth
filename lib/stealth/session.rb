@@ -133,6 +133,8 @@ module Stealth
         primary_session_key
       when :previous
         previous_session_key
+      else
+        raise "Type #{type} is not supported"
       end
     end
 
@@ -151,7 +153,7 @@ module Stealth
     private
 
       def primary_session_key
-        [user_id, page_id].join('-')
+        "session:#{[user_id, page_id].join('-')}" 
       end
 
       def previous_session_key
