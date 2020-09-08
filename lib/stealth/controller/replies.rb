@@ -30,7 +30,7 @@ module Stealth
 
             translated_reply = handler.send(reply.reply_type)
             client = service_client.new(reply: translated_reply,
-                                        access_token: current_message.fb_page[:access_token])
+                                        access_token: current_page_info[:access_token])
             client.transmit
 
             if Stealth.config.transcript_logging

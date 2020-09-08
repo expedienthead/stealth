@@ -116,7 +116,7 @@ module Stealth
       Stealth.load_environment
       # $redis.flushdb
       if Stealth.env == 'development'
-        $redis.scan_each(:match => "session:*") { |key| $redis.del key }
+        $redis.scan_each(:match => "session:*|error-*") { |key| $redis.del key } # clear session and error keys
       end
     end
 

@@ -153,7 +153,7 @@ module Stealth
     private
 
       def primary_session_key
-        "session:#{[user_id, page_id].join('-')}" 
+        "session:#{[user_id, page_id].join('_')}" 
       end
 
       def previous_session_key

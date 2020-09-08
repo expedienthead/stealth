@@ -55,14 +55,14 @@ module Stealth
     def current_session
       @current_session ||= Stealth::Session.new(
         user_id: current_user_id,
-        page_id: current_page_info[:page_id]
+        page_id: current_page_info[:id]
       )
     end
 
     def previous_session
       @previous_session ||= Stealth::Session.new(
         user_id: current_user_id,
-        page_id: current_page_info[:page_id],
+        page_id: current_page_info[:id],
         type: :previous
       )
     end
@@ -155,7 +155,7 @@ module Stealth
     end
 
     def current_session_id
-      [@current_user_id, current_page_info[:page_id]].join("-")
+      [@current_user_id, current_page_info[:page_id]].join("_")
     end
 
     private
