@@ -155,7 +155,7 @@ module Stealth
     end
 
     def current_session_id
-      [@current_user_id, current_page_info[:page_id]].join("_")
+      [@current_user_id, current_page_info[:id]].join("_")
     end
 
     private
@@ -164,7 +164,7 @@ module Stealth
         @progressed = :updated_session
         @current_session = Stealth::Session.new(
           user_id: current_user_id,
-          page_id: current_page_info[:page_id]
+          page_id: current_page_info[:id]
         )
 
         unless current_session.flow_string == flow.to_s && current_session.state_string == state.to_s
