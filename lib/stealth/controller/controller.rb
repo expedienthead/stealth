@@ -155,7 +155,7 @@ module Stealth
     end
 
     def current_session_id
-      [@current_user_id, fb_page_info[:page_id]].join("_")
+      [@current_user_id, current_page_info[:page_id]].join("-")
     end
 
     private
