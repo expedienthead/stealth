@@ -4,7 +4,7 @@ module Stealth
       extend ActiveSupport::Concern
 
       included do
-        def load_setup
+        def load_default_setup
           reply_handler = reply_handler.new
           reply = reply_handler.messenger_profile
           client = service_client.new(
