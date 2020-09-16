@@ -17,6 +17,8 @@ module Stealth
       white:        97
     ].freeze
 
+    puts "STEALTH_ENV: #{ENV['STEALTH_ENV']}"
+
     @@logger ||= ::Logger.new("#{File.expand_path(Pathname.new(Dir.pwd))}/log/event.log")
     @@logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 
