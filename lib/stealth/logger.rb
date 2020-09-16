@@ -31,7 +31,7 @@ module Stealth
     def self.log(topic:, message:)
       unless ENV['STEALTH_ENV'] == 'test'
         puts "TID-#{Stealth.tid} #{print_topic(topic)} #{message}"
-        @@logger.info("test")
+        @@logger.info("TID-#{Stealth.tid} [#{topic}] #{message}")
       end
     end
 
