@@ -17,7 +17,7 @@ module Stealth
       white:        97
     ].freeze
 
-    @@logger ||= Logger.new("#{Stealth.root}/log/event.log")
+    @@logger ||= Logger.new("#{File.expand_path(Pathname.new(Dir.pwd))}/log/event.log")
     @@logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 
     def self.color_code(code)
@@ -31,6 +31,7 @@ module Stealth
     def self.log(topic:, message:)
       unless ENV['STEALTH_ENV'] == 'test'
         puts "TID-#{Stealth.tid} #{print_topic(topic)} #{message}"
+        @@logger.info("test")
       end
     end
 
