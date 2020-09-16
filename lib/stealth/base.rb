@@ -35,10 +35,6 @@ module Stealth
     @root ||= File.expand_path(Pathname.new(Dir.pwd))
   end
 
-  def self.log_path
-    "#{root}/log"
-  end
-
   def self.boot
     load_environment
   end
