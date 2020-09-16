@@ -17,6 +17,9 @@ module Stealth
       white:        97
     ].freeze
 
+    @@logger ||= Logger.new("#{Stealth.log_path}/event.log")
+    @@logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+
     def self.color_code(code)
       COLORS.fetch(code) { raise(ArgumentError, "Color #{code} not supported.") }
     end

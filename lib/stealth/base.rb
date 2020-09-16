@@ -22,6 +22,9 @@ require 'stealth/configuration'
 # helpers
 require 'stealth/helpers/redis'
 
+# logger
+require 'logger'
+
 module Stealth
 
   def self.env
@@ -30,6 +33,10 @@ module Stealth
 
   def self.root
     @root ||= File.expand_path(Pathname.new(Dir.pwd))
+  end
+
+  def self.log_path
+    "#{root}/log"
   end
 
   def self.boot

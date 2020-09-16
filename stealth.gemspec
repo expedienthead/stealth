@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'sidekiq', '~> 5.0'
   s.add_dependency 'activesupport', '~> 5.2'
+  s.add_dependency 'logger', '~> 1.3'
 
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'

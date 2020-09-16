@@ -22,6 +22,7 @@ module Stealth
         directory('bot', "#{name}/bot")
         directory('config', "#{name}/config")
         directory('db', "#{name}/db")
+        directory('log', "#{name}/log")
 
         # Miscellaneous Files
         copy_file "config.ru", "#{name}/config.ru"
