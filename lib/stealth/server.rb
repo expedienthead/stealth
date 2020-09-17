@@ -46,7 +46,7 @@ module Stealth
       begin
         dispatcher.coordinate
       rescue Exception => ex
-        Stealth::Logger.l(topic: "#{e.class}: #{e.message}", message: ex.backtrace.join("\n"))
+        Stealth::Logger.l(topic: "#{ex.class}: #{ex.message}", message: ex.backtrace.join("\n"))
         raise
       end
     end
