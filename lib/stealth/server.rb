@@ -43,8 +43,12 @@ module Stealth
         params: params,
         headers: get_helpers_from_request(request)
       )
-
-      dispatcher.coordinate
+      begin
+        dispatcher.coordinate
+      rescue Exception => ex
+        Stealth::Logger.l(topic: "#{e.class}: #{e.message}", message: e.backtrace.join("\n"))
+        raise
+      end
     end
 
     private
