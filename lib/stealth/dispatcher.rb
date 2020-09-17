@@ -26,6 +26,9 @@ module Stealth
 
     def coordinate
       message_handler.coordinate
+    rescue Exception => ex
+      Stealth::Logger.l(topic: "Exception: #{ex.class} - #{ex.message}", message: ex.backtrace.join("\n\t"))
+      raise
     end
 
     def process
@@ -36,7 +39,7 @@ module Stealth
       bot_controller = BotController.new(service_message: service_message)
       bot_controller.route
     rescue Exception => ex
-      Stealth::Logger.l(topic: "#{ex.class}: #{ex.message}", message: ex.backtrace.join("\n"))
+      Stealth::Logger.l(topic: "Exception: #{ex.class} - #{ex.message}", message: ex.backtrace.join("\n\t"))
       raise
     end
 
