@@ -35,6 +35,9 @@ module Stealth
 
       bot_controller = BotController.new(service_message: service_message)
       bot_controller.route
+    rescue Exception => ex
+      Stealth::Logger.l(topic: "#{e.class}: #{e.message}", message: e.backtrace.join("\n"))
+      raise
     end
 
     private
