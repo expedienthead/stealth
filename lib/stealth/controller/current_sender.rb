@@ -13,14 +13,23 @@ module Stealth
 
       included do
         def current_user
-          redis_key = "#{current_service.try(:downcase)}:#{current_page_info[:id]}"
-          user_name = $redis.hget(redis_key, 'name')
-          user_name = user_profile[:name] if user_name.blank?
-          @current_user ||= Stealth::Controller::CurrentSender::Sender.new(user_name)
+          @current_user ||= Stealth::Controller::CurrentSender::Sender.new(user_info[:name])
         end
       end
 
       private
+
+      def user_info
+        redis_key = "#{current_service.try(:downcase)}:#{current_page_info[:id]}"
+        user_name = $redis.hget(redis_key, 'name')
+        if user_name.blank?
+          user_name = user_profile[:name]
+          $redis.hset(redis_key, 'name', user_name)
+        end
+        {
+          name: user_name
+        }
+      end
 
       def service_client
         Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
@@ -28,7 +37,7 @@ module Stealth
         raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not regconized")
       end
 
-      def user_profile
+      def fetch_user_profile
         profile = service_client.fetch_profile(recipient_id: current_user_id,
                                                access_token: current_page_info[:access_token])
         profile
