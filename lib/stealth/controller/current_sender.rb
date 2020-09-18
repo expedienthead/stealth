@@ -23,7 +23,7 @@ module Stealth
         redis_key = "#{current_service.try(:downcase)}:#{current_page_info[:id]}"
         user_name = $redis.hget(redis_key, 'name')
         if user_name.blank?
-          user_name = user_profile[:name]
+          user_name = fetch_user_profile[:name]
           $redis.hset(redis_key, 'name', user_name)
         end
         {
