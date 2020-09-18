@@ -9,6 +9,7 @@ module Stealth
     include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
+    include Stealth::Controller::CurrentSender
 
     attr_reader :current_message, :current_user_id, :current_flow,
                 :current_service, :flow_controller, :action_name
