@@ -6,16 +6,14 @@ module Stealth
       included do
 
         def load_default_setup
-          puts "Reply handler: load_default_setup"
-          p Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
           reply_handler = reply_handler.new
           reply = reply_handler.messenger_profile
-          client = service_client.new(
-            reply: reply,
-            endpoint: 'messenger_profile',
-            access_token: current_page_info[:access_token]
-          )
-          client.transmit
+          # client = service_client.new(
+          #   reply: reply,
+          #   endpoint: 'messenger_profile',
+          #   access_token: current_page_info[:access_token]
+          # )
+          # client.transmit
         end
 
         private
