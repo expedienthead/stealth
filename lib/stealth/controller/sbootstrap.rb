@@ -7,7 +7,7 @@ module Stealth
       def my_test
         # service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
         # reply_handler = Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
-        reply_handler = reply_handler.new
+        # reply_handler = reply_handler.new
         # reply = reply_handler.messenger_profile
         # client = service_client.new(
         #   reply: reply,
