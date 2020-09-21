@@ -4,7 +4,7 @@ module Stealth
       # extend ActiveSupport::Concern
 
       # included do
-      def load_default_setup
+      def my_test
         # service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
         # reply_handler = Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
         reply_handler = reply_handler.new
