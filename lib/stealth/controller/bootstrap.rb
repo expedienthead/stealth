@@ -7,6 +7,7 @@ module Stealth
 
         def load_default_setup
           puts "Reply handler: load_default_setup"
+          puts "Stealth::Services::#{current_service.classify}::Client"
           reply_handler = reply_handler.new
           reply = reply_handler.messenger_profile
           client = service_client.new(
