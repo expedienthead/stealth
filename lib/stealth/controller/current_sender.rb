@@ -31,16 +31,13 @@ module Stealth
         }
       end
 
-      def service_client
-        Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
-      rescue NameError
-        raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not regconized")
-      end
-
       def fetch_user_profile
+        # service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
         profile = service_client.fetch_profile(recipient_id: current_user_id,
                                                access_token: current_page_info[:access_token])
         profile
+      rescue NameError
+        raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not regconized")
       end
     end
   end

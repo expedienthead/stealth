@@ -5,6 +5,8 @@ module Stealth
 
       included do
         def load_default_setup
+          # service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
+          # reply_handler = Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
           reply_handler = reply_handler.new
           reply = reply_handler.messenger_profile
           client = service_client.new(
@@ -14,20 +16,6 @@ module Stealth
           )
           client.transmit
         end
-      end
-
-      private
-
-      def service_client
-        Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
-      rescue NameError
-        raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not regconized")
-      end
-
-      def reply_handler
-        Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
-      rescue NameError
-        raise(Stealth::Errors::ServiceNotRecognized, "The service '#{current_service}' was not regconized")
       end
     end
   end
