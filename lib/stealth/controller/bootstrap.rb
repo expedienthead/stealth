@@ -6,8 +6,8 @@ module Stealth
       included do
 
         def load_default_setup
+          puts "Reply handler: load_default_setup"
           reply_handler = reply_handler.new
-          puts "Reply handler: #{reply_handler.inspect}"
           reply = reply_handler.messenger_profile
           client = service_client.new(
             reply: reply,
