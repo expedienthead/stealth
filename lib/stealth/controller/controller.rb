@@ -9,7 +9,7 @@ module Stealth
     include Stealth::Controller::Replies
     include Stealth::Controller::CatchAll
     include Stealth::Controller::Helpers
-    include Stealth::Controller::Bootstrap
+    include Stealth::Controller::Sbootstrap
     include Stealth::Controller::CurrentSender
 
     attr_reader :current_message, :current_user_id, :current_flow,
