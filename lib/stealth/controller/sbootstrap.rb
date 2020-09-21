@@ -1,7 +1,7 @@
 module Stealth
   class Controller
     module Sbootstrap
-      extend ActiveSupport::Concern
+      # extend ActiveSupport::Concern
 
       # included do
       def load_default_setup
