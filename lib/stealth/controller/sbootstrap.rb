@@ -1,13 +1,13 @@
 module Stealth
   class Controller
-    module Bootstrap
+    module Sbootstrap
       extend ActiveSupport::Concern
 
       included do
         def load_default_setup
           # service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
           # reply_handler = Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler")
-          # reply_handler = reply_handler.new
+          reply_handler = reply_handler.new
           # reply = reply_handler.messenger_profile
           # client = service_client.new(
           #   reply: reply,
