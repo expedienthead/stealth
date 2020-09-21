@@ -6,7 +6,7 @@ module Stealth
       included do
 
         def load_default_setup
-          reply_handler = reply_handler.new
+          reply_handler = Kernel.const_get("Stealth::Services::#{current_service.classify}::ReplyHandler").new
           reply = reply_handler.messenger_profile
           # client = service_client.new(
           #   reply: reply,
