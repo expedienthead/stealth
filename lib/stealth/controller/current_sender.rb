@@ -1,7 +1,6 @@
 module Stealth
   class Controller
     module CurrentSender
-      extend ActiveSupport::Concern
 
       class Sender
         attr_accessor :name
@@ -30,7 +29,7 @@ module Stealth
       end
 
       def fetch_user_profile
-        service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client").new
+        service_client = Kernel.const_get("Stealth::Services::#{current_service.classify}::Client")
         profile = service_client.fetch_profile(recipient_id: current_user_id,
                                               access_token: current_page_info[:access_token])
         profile
